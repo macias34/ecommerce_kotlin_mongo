@@ -19,7 +19,7 @@ import java.util.UUID
 class ProductController(private val productRepository: ProductRepository) {
 
     @GetMapping("/{productId}")
-    fun getProductData(@PathVariable("productId") productId: UUID): ProductData {
+    fun getProductData(@PathVariable("productId") productId: UUID): ResponseEntity<ProductData> {
         val product = productRepository.findByIdOrNull(productId)
             ?: throw NotFoundException()
 
@@ -30,7 +30,8 @@ class ProductController(private val productRepository: ProductRepository) {
             Money.of(100, "PLN").toData(),
             100
         )
-        return productData;
+
+        return ResponseEntity.ok(productData);
     }
 
     @PostMapping
