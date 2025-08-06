@@ -1,6 +1,8 @@
 package com.macias34.ecommerce_kotlin_mongo.product
 
 import com.macias34.ecommerce_kotlin_mongo.Vendor
+import com.macias34.ecommerce_kotlin_mongo.pricing.ProductPricing
+import com.macias34.ecommerce_kotlin_mongo.pricing.ProductPricingRepository
 import com.macias34.ecommerce_kotlin_mongo.toData
 import org.javamoney.moneta.Money
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
@@ -16,7 +18,10 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/products")
-class ProductController(private val productRepository: ProductRepository) {
+class ProductController(
+    private val productRepository: ProductRepository,
+    private val productPricingRepository: ProductPricingRepository
+) {
 
     @GetMapping("/{productId}")
     fun getProductData(@PathVariable("productId") productId: UUID): ResponseEntity<ProductData> {
@@ -42,6 +47,12 @@ class ProductController(private val productRepository: ProductRepository) {
         productRepository.save(product)
 
         return ResponseEntity.ok(ProductCreatedResponse(product.id));
+    }
+
+    @PostMapping("/pricing")
+    fun createPricing(){
+        val pricing = ProductPricing(UUID.randomUUID(), Money.of(100, "PLN"), emptyList())
+        productPricingRepository.save(pricing)
     }
 
 }
