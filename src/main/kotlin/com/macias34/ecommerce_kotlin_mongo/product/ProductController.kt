@@ -1,8 +1,8 @@
 package com.macias34.ecommerce_kotlin_mongo.product
 
+import com.macias34.ecommerce_kotlin_mongo.DateRange
 import com.macias34.ecommerce_kotlin_mongo.Vendor
-import com.macias34.ecommerce_kotlin_mongo.pricing.ProductPricing
-import com.macias34.ecommerce_kotlin_mongo.pricing.ProductPricingRepository
+import com.macias34.ecommerce_kotlin_mongo.pricing.*
 import com.macias34.ecommerce_kotlin_mongo.toData
 import org.javamoney.moneta.Money
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.time.Duration
+import java.time.Instant
+import java.time.temporal.TemporalUnit
 import java.util.UUID
 
 @RestController
@@ -51,7 +54,12 @@ class ProductController(
 
     @PostMapping("/pricing")
     fun createPricing(){
-        val pricing = ProductPricing(UUID.randomUUID(), Money.of(100, "PLN"), emptyList())
+        val now = Instant.now()
+        val pricingPolicy = PricingPolicy(Adjustment.of(15.0, AdjustmentType.PERCENTAGE), Applicability(Vendor.ALLEGRO, DateRange(
+            now, now.plus(Duration.ofDays(7))
+        )))
+        val pricing = ProductPricing(UUID.randomUUID(), Money.of(100, "PLN"),
+            listOf(pricingPolicy))
         productPricingRepository.save(pricing)
     }
 
