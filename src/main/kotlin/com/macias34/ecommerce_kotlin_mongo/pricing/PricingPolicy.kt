@@ -5,7 +5,6 @@ import com.macias34.ecommerce_kotlin_mongo.Vendor
 import org.javamoney.moneta.Money
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.time.Instant
 
 class PricingPolicy(private val adjustment: Adjustment, private val applicability: Applicability) {
     fun apply(money: Money): Money {
@@ -69,8 +68,6 @@ data class Applicability(val vendor: Vendor, val dateRange: DateRange) {
         return this.vendor == vendor && this.dateRange.contains(date)
     }
 }
-
-data class ApplicabilityContext(val vendor: Vendor, val date: Instant)
 
 enum class AdjustmentType {
     PERCENTAGE,
