@@ -7,7 +7,6 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import java.time.Duration
 import java.time.Instant
-import java.util.UUID
 
 class ProductPricingSpec : FunSpec({
 
@@ -16,7 +15,7 @@ class ProductPricingSpec : FunSpec({
 
     test("Calculating the price with no active policies") {
         // Given
-        var pricing = ProductPricing(UUID.randomUUID(), money(100), listOf(), listOf())
+        var pricing = ProductPricing.of(money(100))
         var pricingContext = PricingContext(Vendor.ALLEGRO, fixedDate)
 
         // Then
@@ -26,10 +25,9 @@ class ProductPricingSpec : FunSpec({
     test("A single Price Adjustment is applied") {
         // Given
         var priceAdjustment =
-            PricingPolicy(Adjustment.ofPercentage(15.0), Applicability(Vendor.ALLEGRO, fixedDateRange))
-        var pricing = ProductPricing(
-            UUID.randomUUID(), money(100), listOf(priceAdjustment),
-            listOf()
+            PriceAdjustment.ofPercentage(15.0, Applicability(Vendor.ALLEGRO, fixedDateRange))
+        var pricing = ProductPricing.of(
+            money(100), listOf(priceAdjustment)
         )
         var pricingContext = PricingContext(Vendor.ALLEGRO, fixedDate)
 

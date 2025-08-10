@@ -6,13 +6,19 @@ import org.javamoney.moneta.Money
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class PricingPolicy(private val adjustment: Adjustment, private val applicability: Applicability) {
+class PriceAdjustment(private val adjustment: Adjustment, private val applicability: Applicability) {
     fun apply(money: Money): Money {
         return adjustment.apply(money)
     }
 
     fun isApplicable(context: PricingContext): Boolean {
         return applicability.isApplicable(context);
+    }
+
+    companion object {
+        fun ofPercentage(percentage: Double, applicability: Applicability): PriceAdjustment {
+            return PriceAdjustment(Adjustment.ofPercentage(percentage), applicability)
+        }
     }
 
 }
