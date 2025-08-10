@@ -15,8 +15,8 @@ class ProductPricingSpec : FunSpec({
 
     test("Calculating the price with no active policies") {
         // Given
-        var pricing = ProductPricing.of(money(100))
-        var pricingContext = PricingContext(Vendor.ALLEGRO, fixedDate)
+        val pricing = ProductPricing.of(money(100))
+        val pricingContext = PricingContext(Vendor.ALLEGRO, fixedDate)
 
         // Then
         pricing.priceFor(pricingContext) shouldBe money(100)
@@ -24,14 +24,27 @@ class ProductPricingSpec : FunSpec({
 
     test("A single Price Adjustment is applied") {
         // Given
-        var priceAdjustment =
-            PriceAdjustment.ofPercentage(15.0, Applicability(Vendor.ALLEGRO, fixedDateRange))
-        var pricing = ProductPricing.of(
+        val priceAdjustment =
+            PricingPolicy.ofPercentage(15.0, Applicability(Vendor.ALLEGRO, fixedDateRange))
+        val pricing = ProductPricing.of(
             money(100), listOf(priceAdjustment)
         )
-        var pricingContext = PricingContext(Vendor.ALLEGRO, fixedDate)
+        val pricingContext = PricingContext(Vendor.ALLEGRO, fixedDate)
 
         // Then
         pricing.priceFor(pricingContext) shouldBe money(115)
+    }
+
+    test("Multiple Price Adjustments are cumulative") {
+        // Given
+        val percentagePriceAdjustment =
+            PricingPolicy.ofPercentage(10.0, Applicability(Vendor.ALLEGRO, fixedDateRange))
+        val valuePriceAdjustment =
+            PricingPolicy.ofValue(20.0, Applicability(Vendor.ALLEGRO, fixedDateRange))
+        val pricing = ProductPricing.of(money(100), listOf(percentagePriceAdjustment, valuePriceAdjustment))
+        val pricingContext = PricingContext(Vendor.ALLEGRO, fixedDate)
+
+        // Then
+        pricing.priceFor(pricingContext) shouldBe money(130)
     }
 })

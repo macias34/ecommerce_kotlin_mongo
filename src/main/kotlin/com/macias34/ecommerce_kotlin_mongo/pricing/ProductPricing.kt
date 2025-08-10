@@ -6,8 +6,8 @@ import org.springframework.data.mongodb.core.mapping.Document
 import java.util.UUID
 
 @Document(collection = "product_pricing")
-class ProductPricing private constructor(@Id val id: UUID, private val basePrice: Money, private val priceAdjustments: List<PriceAdjustment>,
-                     private val policies: List<PriceAdjustment>) {
+class ProductPricing private constructor(@Id val id: UUID, private val basePrice: Money, private val priceAdjustments: List<PricingPolicy>,
+                                         private val policies: List<PricingPolicy>) {
     fun priceFor(pricingContext: PricingContext): Money {
         val applicablePriceAdjustments = priceAdjustments.filter { adjustment -> adjustment.isApplicable(pricingContext) }
 
@@ -18,8 +18,8 @@ class ProductPricing private constructor(@Id val id: UUID, private val basePrice
     }
 
     companion object {
-        fun of(basePrice: Money, priceAdjustments: List<PriceAdjustment> = listOf(),
-               policies: List<PriceAdjustment> = listOf()
+        fun of(basePrice: Money, priceAdjustments: List<PricingPolicy> = listOf(),
+               policies: List<PricingPolicy> = listOf()
                ): ProductPricing {
 
             return ProductPricing(

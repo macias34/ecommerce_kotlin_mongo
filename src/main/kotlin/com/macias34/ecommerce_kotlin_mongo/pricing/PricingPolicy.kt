@@ -6,7 +6,7 @@ import org.javamoney.moneta.Money
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class PriceAdjustment(private val adjustment: Adjustment, private val applicability: Applicability) {
+class PricingPolicy(private val adjustment: Adjustment, private val applicability: Applicability) {
     fun apply(money: Money): Money {
         return adjustment.apply(money)
     }
@@ -16,8 +16,12 @@ class PriceAdjustment(private val adjustment: Adjustment, private val applicabil
     }
 
     companion object {
-        fun ofPercentage(percentage: Double, applicability: Applicability): PriceAdjustment {
-            return PriceAdjustment(Adjustment.ofPercentage(percentage), applicability)
+        fun ofPercentage(percentage: Double, applicability: Applicability): PricingPolicy {
+            return PricingPolicy(Adjustment.ofPercentage(percentage), applicability)
+        }
+
+        fun ofValue(value: Double, applicability: Applicability): PricingPolicy {
+            return PricingPolicy(Adjustment.ofValue(value), applicability)
         }
     }
 
@@ -31,12 +35,16 @@ data class Adjustment private constructor(val adjustmentValue: AdjustmentValue, 
             return money.multiply(remainder)
         }
 
-        return money.subtract(Money.of(adjustmentValue.value, money.currency))
+        return money.add(Money.of(adjustmentValue.value, money.currency))
     }
 
     companion object {
         fun ofPercentage(percentage: Double): Adjustment {
             return Adjustment( AdjustmentValue.ofPercentage(percentage), AdjustmentType.PERCENTAGE)
+        }
+
+        fun ofValue(value: Double): Adjustment {
+            return Adjustment(AdjustmentValue.ofValue(value), AdjustmentType.VALUE)
         }
     }
 }
