@@ -3,6 +3,8 @@ Feature: Product Price Calculation
   using a two-phase model. First, all cumulative Price Adjustments are applied to the base price
   to get a List Price. Second, the single best Exclusive Policy is applied to the List Price
   to determine the Final Price.
+  Applicability is abstract, however for easier understanding we will onlly use vendor as an applicability
+  condition.
 
   Scenario: Calculating the price with no active policies
     Given a product has a base price of $100.00
@@ -12,7 +14,7 @@ Feature: Product Price Calculation
 
   Scenario: A single Price Adjustment is applied
     Given a product has a base price of $100.00
-    And a Price Adjustment exists that adds 15%
+    And a Price Adjustment exists that adds 15%, which is applicable if vendor is 'Allegro'
     When the price is requested with a context that makes the Price Adjustment applicable
     Then the final price is $115.00
 
