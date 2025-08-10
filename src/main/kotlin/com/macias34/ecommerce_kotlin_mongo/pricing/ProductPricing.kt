@@ -6,8 +6,14 @@ import org.springframework.data.mongodb.core.mapping.Document
 import java.util.UUID
 
 @Document(collection = "product_pricing")
-class ProductPricing(@Id val id: UUID, private val basePrice: Money, private val policies: List<PricingPolicy>) {
+class ProductPricing(@Id val id: UUID, private val basePrice: Money, private val priceAdjustments: List<PricingPolicy>,
+                     private val policies: List<PricingPolicy>) {
     fun priceFor(pricingContext: PricingContext): Money {
-        return basePrice;
+        val applicablePriceAdjustments = priceAdjustments.filter { adjustment -> adjustment.isApplicable(pricingContext) }
+
+        var finalPrice = basePrice
+        applicablePriceAdjustments.forEach { adjustment -> finalPrice = adjustment.apply(finalPrice) }
+
+        return finalPrice
     }
 }

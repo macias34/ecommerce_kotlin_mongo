@@ -5,14 +5,13 @@ import com.macias34.ecommerce_kotlin_mongo.Vendor
 import org.javamoney.moneta.Money
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.time.Instant
 
 class PricingPolicy(private val adjustment: Adjustment, private val applicability: Applicability) {
     fun apply(money: Money): Money {
         return adjustment.apply(money)
     }
 
-    fun isApplicable(context: ApplicabilityContext): Boolean {
+    fun isApplicable(context: PricingContext): Boolean {
         return applicability.isApplicable(context);
     }
 
@@ -22,30 +21,28 @@ data class Adjustment private constructor(val adjustmentValue: AdjustmentValue, 
 
     fun apply(money: Money): Money {
         if (adjustmentType == AdjustmentType.PERCENTAGE) {
-            val remainder = AdjustmentValue.ofPercentage(100.00).minus(adjustmentValue)
-            return money.multiply(remainder.value)
+            val remainder = AdjustmentValue.ofPercentage(100.00).plus(adjustmentValue).percentageValue()
+            return money.multiply(remainder)
         }
 
         return money.subtract(Money.of(adjustmentValue.value, money.currency))
     }
 
     companion object {
-        fun of(value: Double, adjustmentType: AdjustmentType): Adjustment {
-            val adjustmentValue = if (adjustmentType == AdjustmentType.PERCENTAGE) {
-                AdjustmentValue.ofPercentage(value)
-            } else {
-                AdjustmentValue.ofValue(value)
-            }
-
-            return Adjustment(adjustmentValue, adjustmentType)
+        fun ofPercentage(percentage: Double): Adjustment {
+            return Adjustment( AdjustmentValue.ofPercentage(percentage), AdjustmentType.PERCENTAGE)
         }
     }
 }
 
 data class AdjustmentValue private constructor(val value: BigDecimal) {
 
-    fun minus(subtract: AdjustmentValue): AdjustmentValue {
-        return AdjustmentValue(value.subtract(subtract.value))
+    fun plus(subtract: AdjustmentValue): AdjustmentValue {
+        return AdjustmentValue(value.plus(subtract.value))
+    }
+
+    fun percentageValue(): BigDecimal {
+        return value.divide(BigDecimal(100))
     }
 
     companion object {
@@ -64,13 +61,12 @@ data class AdjustmentValue private constructor(val value: BigDecimal) {
 }
 
 data class Applicability(val vendor: Vendor, val dateRange: DateRange) {
-    fun isApplicable(context: ApplicabilityContext): Boolean {
+    fun isApplicable(context: PricingContext): Boolean {
         val (vendor, date) = context
         return this.vendor == vendor && this.dateRange.contains(date)
     }
 }
 
-data class ApplicabilityContext(val vendor: Vendor, val date: Instant)
 
 enum class AdjustmentType {
     PERCENTAGE,
