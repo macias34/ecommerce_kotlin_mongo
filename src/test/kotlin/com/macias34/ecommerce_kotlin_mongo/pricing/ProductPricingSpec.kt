@@ -12,39 +12,39 @@ class ProductPricingSpec : FunSpec({
 
     val fixedDate = Instant.now()
     val fixedDateRange = DateRange(fixedDate, fixedDate.plus(Duration.ofDays(1)))
+    val applicableContext = PricingContext(Vendor.ALLEGRO, fixedDate)
+    val fixedApplicability = Applicability(Vendor.ALLEGRO, fixedDateRange)
 
     test("Calculating the price with no active policies") {
         // Given
         val pricing = ProductPricing.of(money(100))
-        val pricingContext = PricingContext(Vendor.ALLEGRO, fixedDate)
 
         // Then
-        pricing.priceFor(pricingContext) shouldBe money(100)
+        pricing.priceFor(applicableContext) shouldBe money(100)
     }
 
     test("A single Price Adjustment is applied") {
         // Given
         val priceAdjustment =
-            PricingPolicy.ofPercentage(15.0, Applicability(Vendor.ALLEGRO, fixedDateRange))
+            PricingPolicy.ofPercentage(15.0, fixedApplicability)
         val pricing = ProductPricing.of(
             money(100), listOf(priceAdjustment)
         )
-        val pricingContext = PricingContext(Vendor.ALLEGRO, fixedDate)
 
         // Then
-        pricing.priceFor(pricingContext) shouldBe money(115)
+        pricing.priceFor(applicableContext) shouldBe money(115)
     }
 
     test("Multiple Price Adjustments are cumulative") {
         // Given
         val percentagePriceAdjustment =
-            PricingPolicy.ofPercentage(10.0, Applicability(Vendor.ALLEGRO, fixedDateRange))
+            PricingPolicy.ofPercentage(10.0, fixedApplicability)
         val valuePriceAdjustment =
-            PricingPolicy.ofValue(20.0, Applicability(Vendor.ALLEGRO, fixedDateRange))
-        val pricing = ProductPricing.of(money(100), listOf(percentagePriceAdjustment, valuePriceAdjustment))
-        val pricingContext = PricingContext(Vendor.ALLEGRO, fixedDate)
+            PricingPolicy.ofValue(20.0, fixedApplicability)
+        val pricing = ProductPricing.of(money(100),
+            listOf(percentagePriceAdjustment, valuePriceAdjustment))
 
         // Then
-        pricing.priceFor(pricingContext) shouldBe money(130)
+        pricing.priceFor(applicableContext) shouldBe money(130)
     }
 })
