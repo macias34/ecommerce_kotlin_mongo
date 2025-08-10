@@ -66,7 +66,7 @@ data class AdjustmentValue private constructor(val value: BigDecimal) {
         }
 
         fun ofPercentage(percentage: Double): AdjustmentValue {
-            require(percentage in 0.0..100.0)
+            require(percentage in -100.00..100.0)
 
             val scaledPercentage = BigDecimal.valueOf(percentage).setScale(2, RoundingMode.HALF_UP)
             return AdjustmentValue(scaledPercentage)

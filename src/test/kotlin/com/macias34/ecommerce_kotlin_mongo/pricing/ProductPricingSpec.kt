@@ -47,4 +47,14 @@ class ProductPricingSpec : FunSpec({
         // Then
         pricing.priceFor(applicableContext) shouldBe money(130)
     }
+
+    test("A single Exclusive Policy is applied") {
+        // Given
+        val exclusivePolicy = PricingPolicy.ofPercentage(-25.0, fixedApplicability)
+        val pricing = ProductPricing.of(money(200),
+            exclusivePolicies = listOf(exclusivePolicy))
+
+        // Then
+        pricing.priceFor(applicableContext) shouldBe money(150)
+    }
 })
