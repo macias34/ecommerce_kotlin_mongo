@@ -11,11 +11,11 @@ class ProductPricing private constructor(
     private val exclusivePolicies: ExclusivePolicies
 ) {
     fun priceFor(pricingContext: PricingContext): Money {
-        var finalPrice = basePrice
-        finalPrice = priceAdjustments.apply(finalPrice, pricingContext)
-        finalPrice = exclusivePolicies.apply(finalPrice, pricingContext)
+        val calculationSteps = listOf(priceAdjustments, exclusivePolicies)
 
-        return finalPrice
+        return calculationSteps.fold(basePrice) {
+            currentPrice, step -> step.apply(currentPrice, pricingContext)
+        }
     }
 
     companion object {
