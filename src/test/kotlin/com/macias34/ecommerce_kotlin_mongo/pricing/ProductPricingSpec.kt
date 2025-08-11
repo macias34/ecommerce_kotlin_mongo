@@ -91,4 +91,26 @@ class ProductPricingSpec : FunSpec({
         // Then
         pricing.priceFor(applicableContext) shouldBe money(75)
     }
+
+    test("The best Exclusive Policy is applied after all Cumulative Policies") {
+        // Given
+        val cumulativePolicy = PricingPolicy.ofPercentage(10.0, fixedApplicability)
+        val percentageExclusivePolicy = PricingPolicy.ofPercentage(-20.0, fixedApplicability)
+        val valueExclusivePolicy = PricingPolicy.ofValue(-25.0, fixedApplicability)
+        val pricing = ProductPricing.of(money(100),
+            setOf(cumulativePolicy), setOf(percentageExclusivePolicy, valueExclusivePolicy))
+
+        // Then
+        pricing.priceFor(applicableContext) shouldBe money(85)
+    }
+
+    test("The final price cannot be negative") {
+        // Given
+        val exclusivePolicy =  PricingPolicy.ofValue(-15.0, fixedApplicability)
+        val pricing = ProductPricing.of(money(10),
+            exclusivePolicies = setOf(exclusivePolicy))
+
+        // Then
+        pricing.priceFor(applicableContext) shouldBe money(0)
+    }
 })

@@ -13,9 +13,11 @@ class ProductPricing private constructor(
     fun priceFor(pricingContext: PricingContext): Money {
         val calculationSteps = listOf(cumulativePolicies, exclusivePolicies)
 
-        return calculationSteps.fold(basePrice) {
+        val finalPrice = calculationSteps.fold(basePrice) {
             currentPrice, step -> step.apply(currentPrice, pricingContext)
         }
+
+        return maxOf(finalPrice, Money.zero(finalPrice.currency))
     }
 
     companion object {
