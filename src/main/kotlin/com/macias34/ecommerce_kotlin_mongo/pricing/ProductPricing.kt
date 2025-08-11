@@ -7,49 +7,28 @@ import java.util.UUID
 
 @Document(collection = "product_pricing")
 class ProductPricing private constructor(
-    @Id val id: UUID, private val basePrice: Money, private val priceAdjustments: List<PricingPolicy>,
-    private val exclusivePolicies: List<PricingPolicy>
+    @Id val id: UUID, private val basePrice: Money, private val priceAdjustments: PriceAdjustments,
+    private val exclusivePolicies: ExclusivePolicies
 ) {
     fun priceFor(pricingContext: PricingContext): Money {
-        val applicablePriceAdjustments =
-            priceAdjustments.filter { adjustment -> adjustment.isApplicable(pricingContext) }
-        val applicableExclusivePolicies =
-            exclusivePolicies.filter { adjustment -> adjustment.isApplicable(pricingContext) }
-
         var finalPrice = basePrice
-        applicablePriceAdjustments.forEach { adjustment -> finalPrice = adjustment.apply(finalPrice) }
-        finalPrice = priceAfterApplyingBestExclusivePolicy(finalPrice, applicableExclusivePolicies)
+        finalPrice = priceAdjustments.apply(finalPrice, pricingContext)
+        finalPrice = exclusivePolicies.apply(finalPrice, pricingContext)
 
         return finalPrice
     }
 
-    private fun priceAfterApplyingBestExclusivePolicy(
-        finalPrice: Money,
-        exclusivePolicies: List<PricingPolicy>
-    ): Money {
-        var lowestPrice = finalPrice
-
-        for (policy in exclusivePolicies) {
-            val priceAfterApplyingPolicy = policy.apply(finalPrice)
-            if (priceAfterApplyingPolicy.isLessThan(lowestPrice)) {
-                lowestPrice = priceAfterApplyingPolicy
-            }
-        }
-
-        return lowestPrice
-    }
-
     companion object {
         fun of(
-            basePrice: Money, priceAdjustments: List<PricingPolicy> = listOf(),
-            exclusivePolicies: List<PricingPolicy> = listOf()
+            basePrice: Money, priceAdjustments: Set<PricingPolicy> = setOf(),
+            exclusivePolicies: Set<PricingPolicy> = setOf()
         ): ProductPricing {
 
             return ProductPricing(
                 UUID.randomUUID(),
                 basePrice,
-                priceAdjustments,
-                exclusivePolicies
+                PriceAdjustments(priceAdjustments),
+                ExclusivePolicies(exclusivePolicies)
             )
         }
     }

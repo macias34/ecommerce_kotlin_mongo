@@ -7,11 +7,15 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 class PricingPolicy(private val adjustment: Adjustment, private val applicability: Applicability) {
-    fun apply(money: Money): Money {
+    fun apply(money: Money, context: PricingContext): Money {
+        if(!isApplicable(context)){
+            return money
+        }
+
         return adjustment.apply(money)
     }
 
-    fun isApplicable(context: PricingContext): Boolean {
+    private fun isApplicable(context: PricingContext): Boolean {
         return applicability.isApplicable(context);
     }
 
