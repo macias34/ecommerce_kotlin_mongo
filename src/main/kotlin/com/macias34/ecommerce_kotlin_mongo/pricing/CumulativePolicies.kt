@@ -4,11 +4,9 @@ import org.javamoney.moneta.Money
 
 data class CumulativePolicies(private val cumulativePolicies: Set<PricingPolicy>) : PriceCalculationStep {
 
-    override fun apply(currentPrice: Money, pricingContext: PricingContext): Money {
-        var newPrice = currentPrice
-        for (policy in cumulativePolicies) {
-            newPrice = policy.apply(newPrice, pricingContext)
+    override fun apply(priceBeforeApplyingPolicies: Money, pricingContext: PricingContext): Money {
+        return cumulativePolicies.fold(priceBeforeApplyingPolicies) {
+            currentPrice, policy -> policy.apply(currentPrice, pricingContext)
         }
-        return newPrice
     }
 }

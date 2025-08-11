@@ -3,16 +3,15 @@ package com.macias34.ecommerce_kotlin_mongo.pricing
 import org.javamoney.moneta.Money
 
 data class ExclusivePolicies(private val exclusivePolicies: Set<PricingPolicy>): PriceCalculationStep {
-    override fun apply(currentPrice: Money, pricingContext: PricingContext): Money {
-        var lowestPrice = currentPrice
+    override fun apply(priceBeforeApplyingPolicies: Money, pricingContext: PricingContext): Money {
+        return exclusivePolicies.fold(priceBeforeApplyingPolicies) { lowestPriceSoFar, policy ->
+            val priceFromCurrentPolicy = policy.apply(priceBeforeApplyingPolicies, pricingContext)
 
-        for (policy in exclusivePolicies) {
-            val priceAfterApplyingPolicy = policy.apply(currentPrice, pricingContext)
-            if (priceAfterApplyingPolicy.isLessThan(lowestPrice)) {
-                lowestPrice = priceAfterApplyingPolicy
+            if (priceFromCurrentPolicy.isLessThan(lowestPriceSoFar)) {
+                priceFromCurrentPolicy
+            } else {
+                lowestPriceSoFar
             }
         }
-
-        return lowestPrice
     }
 }
