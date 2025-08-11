@@ -1,6 +1,6 @@
 Feature: Product Price Calculation
   To ensure fair and predictable pricing, the system calculates the final price of a product
-  using a two-phase model. First, all cumulative Price Adjustments are applied to the base price
+  using a two-phase model. First, all cumulative Cumulative Policies are applied to the base price
   to get a List Price. Second, the single best Exclusive Policy is applied to the List Price
   to determine the Final Price.
   Applicability is abstract, however for easier understanding we will onlly use vendor as an applicability
@@ -8,21 +8,21 @@ Feature: Product Price Calculation
 
   Scenario: Calculating the price with no active policies
     Given a product has a base price of $100.00
-    And no Price Adjustments or Exclusive Policies are applicable
+    And no Cumulative Policies or Exclusive Policies are applicable
     When the price is requested
     Then the final price is $100.00
 
-  Scenario: A single Price Adjustment is applied
+  Scenario: A single Cumulative Policy is applied
     Given a product has a base price of $100.00
-    And a Price Adjustment exists that adds 15%, which is applicable if vendor is 'Allegro'
-    When the price is requested with a context that makes the Price Adjustment applicable
+    And a Cumulative Policy exists that adds 15%, which is applicable if vendor is 'Allegro'
+    When the price is requested with a context that makes the Cumulative Policy applicable
     Then the final price is $115.00
 
-  Scenario: Multiple Price Adjustments are cumulative
+  Scenario: Multiple Cumulative Policies are cumulative
     Given a product has a base price of $100.00
-    And a Price Adjustment exists that adds 10%
-    And another Price Adjustment exists that adds a flat amount of $20.00
-    When the price is requested with a context that makes both Price Adjustments applicable
+    And a Cumulative Policy exists that adds 10%
+    And another Cumulative Policy exists that adds a flat amount of $20.00
+    When the price is requested with a context that makes both Cumulative Policies applicable
     Then the final price is $130.00
 
   Scenario: A single Exclusive Policy (discount) is applied
@@ -38,9 +38,9 @@ Feature: Product Price Calculation
     When the price is requested with a context that makes both Exclusive Policies applicable
     Then the final price is $75.00
 
-  Scenario: The best Exclusive Policy is applied after all Price Adjustments
+  Scenario: The best Exclusive Policy is applied after all Cumulative Policies
     Given a product has a base price of $100.00
-    And a Price Adjustment exists that adds 10%
+    And a Cumulative Policy exists that adds 10%
     And an Exclusive Policy exists that subtracts 20%
     And another Exclusive Policy exists that subtracts a flat amount of $25.00
     When the price is requested with a context that makes all policies applicable

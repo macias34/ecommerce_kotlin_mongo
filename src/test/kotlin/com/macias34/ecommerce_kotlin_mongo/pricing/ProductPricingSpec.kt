@@ -24,38 +24,38 @@ class ProductPricingSpec : FunSpec({
         pricing.priceFor(applicableContext) shouldBe money(100)
     }
 
-    test("A single Price Adjustment is applied") {
+    test("A single Cumulative Policy is applied") {
         // Given
-        val priceAdjustment =
+        val cumulativePolicy =
             PricingPolicy.ofPercentage(15.0, fixedApplicability)
         val pricing = ProductPricing.of(
-            money(100), setOf(priceAdjustment)
+            money(100), setOf(cumulativePolicy)
         )
 
         // Then
         pricing.priceFor(applicableContext) shouldBe money(115)
     }
 
-    test("A Price Adjustment is not applied for not applicable context") {
+    test("A Cumulative Policy is not applied for not applicable context") {
         // Given
-        val priceAdjustment =
+        val cumulativePolicy =
             PricingPolicy.ofPercentage(15.0, fixedApplicability)
         val pricing = ProductPricing.of(
-            money(100), setOf(priceAdjustment)
+            money(100), setOf(cumulativePolicy)
         )
 
         // Then
         pricing.priceFor(notApplicableContext) shouldBe money(100)
     }
 
-    test("Multiple Price Adjustments are cumulative") {
+    test("Multiple Cumulative Policies are cumulative") {
         // Given
-        val percentagePriceAdjustment =
+        val percentagePolicy =
             PricingPolicy.ofPercentage(10.0, fixedApplicability)
-        val valuePriceAdjustment =
+        val valuePolicy =
             PricingPolicy.ofValue(20.0, fixedApplicability)
         val pricing = ProductPricing.of(money(100),
-            setOf(percentagePriceAdjustment, valuePriceAdjustment))
+            setOf(percentagePolicy, valuePolicy))
 
         // Then
         pricing.priceFor(applicableContext) shouldBe money(130)

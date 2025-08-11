@@ -7,11 +7,11 @@ import java.util.UUID
 
 @Document(collection = "product_pricing")
 class ProductPricing private constructor(
-    @Id val id: UUID, private val basePrice: Money, private val priceAdjustments: PriceAdjustments,
+    @Id val id: UUID, private val basePrice: Money, private val cumulativePolicies: CumulativePolicies,
     private val exclusivePolicies: ExclusivePolicies
 ) {
     fun priceFor(pricingContext: PricingContext): Money {
-        val calculationSteps = listOf(priceAdjustments, exclusivePolicies)
+        val calculationSteps = listOf(cumulativePolicies, exclusivePolicies)
 
         return calculationSteps.fold(basePrice) {
             currentPrice, step -> step.apply(currentPrice, pricingContext)
@@ -27,7 +27,7 @@ class ProductPricing private constructor(
             return ProductPricing(
                 UUID.randomUUID(),
                 basePrice,
-                PriceAdjustments(priceAdjustments),
+                CumulativePolicies(priceAdjustments),
                 ExclusivePolicies(exclusivePolicies)
             )
         }
