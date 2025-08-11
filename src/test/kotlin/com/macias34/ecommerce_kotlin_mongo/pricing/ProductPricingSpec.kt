@@ -57,4 +57,15 @@ class ProductPricingSpec : FunSpec({
         // Then
         pricing.priceFor(applicableContext) shouldBe money(150)
     }
+
+    test("The lowest price option is chosen from multiple Exclusive Policies") {
+        // Given
+        val higherFinalPricePolicy = PricingPolicy.ofPercentage(-20.0, fixedApplicability)
+        val lowerFinalPricePolicy = PricingPolicy.ofValue(-25.0, fixedApplicability)
+        val pricing = ProductPricing.of(money(100),
+            exclusivePolicies = listOf(higherFinalPricePolicy, lowerFinalPricePolicy))
+
+        // Then
+        pricing.priceFor(applicableContext) shouldBe money(75)
+    }
 })
