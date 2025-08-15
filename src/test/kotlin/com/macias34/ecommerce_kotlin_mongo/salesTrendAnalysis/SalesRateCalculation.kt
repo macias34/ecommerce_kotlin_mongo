@@ -34,5 +34,19 @@ class SalesRateCalculation : FunSpec({
         salesRate shouldBe SalesRate.of(8, Duration.ofHours(1))
     }
 
+    test("Calculating sales rate with a sale on the boundary") {
+        // Given
+        val sales = listOf(
+            Sale.of(iphoneId, 6, minutesAgo(30)),
+            Sale.of(iphoneId, 4, minutesAgo(60))
+        )
+
+        // When
+        val salesRate = salesRateCalculator.calculate(sales, Duration.ofHours(1))
+
+        // Then
+        salesRate shouldBe SalesRate.of(10, Duration.ofHours(1))
+    }
+
 })
 
