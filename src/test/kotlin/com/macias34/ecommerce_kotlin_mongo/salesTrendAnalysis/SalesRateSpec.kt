@@ -9,7 +9,7 @@ import java.time.ZoneId
 import java.util.UUID
 
 
-class SalesRateCalculation : FunSpec({
+class SalesRateSpec : FunSpec({
     val iphoneId = UUID.randomUUID()
     val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     val date = Instant.now(clock)
