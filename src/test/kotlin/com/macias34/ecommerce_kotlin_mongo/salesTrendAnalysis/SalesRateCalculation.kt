@@ -48,5 +48,19 @@ class SalesRateCalculation : FunSpec({
         salesRate shouldBe SalesRate.of(10, Duration.ofHours(1))
     }
 
+    test("Calculating sales rate with no recent sales") {
+        // Given
+        val sales = listOf(
+            Sale.of(iphoneId, 10, minutesAgo(90)),
+            Sale.of(iphoneId, 5, minutesAgo(120))
+        )
+
+        // When
+        val salesRate = salesRateCalculator.calculate(sales, Duration.ofHours(1))
+
+        // Then
+        salesRate shouldBe SalesRate.of(0, Duration.ofHours(1))
+    }
+
 })
 

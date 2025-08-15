@@ -15,6 +15,6 @@ data class SalesRate private constructor(val value: SalesRateValue, val duration
 
 data class SalesRateValue(val value: Long){
     init {
-        require(value > 0)
+        require(value >= 0)
     }
 }
