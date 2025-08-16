@@ -13,6 +13,7 @@ class SalesRateSpec : FunSpec({
     val iphoneId = UUID.randomUUID()
     val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     val date = Instant.now(clock)
+    // todo is this calculator needed?
     val salesRateCalculator = SalesRateCalculator(clock)
 
     fun minutesAgo(value: Long): Instant {

@@ -25,6 +25,7 @@ Feature: Sales Trend Detection
     When the current sales rate for the 'iPhone 16' product changes to 11 sales/hour
     Then no significant sales activity is detected for the 'iPhone 16' product
 
+#    todo scenario where latest sales rate is there
   Scenario: Sales activity change crossing the threshold is detected - domain service
     Given the system is configured with a detection threshold of 0.2
     And the product 'iPhone 16' has a base sales rate of 10 sales/hour
