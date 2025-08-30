@@ -1,6 +1,5 @@
 package com.macias34.ecommerce_kotlin_mongo.salesTrendAnalysis
 
-import com.macias34.ecommerce_kotlin_mongo.salesTrendAnalysis.Fixtures.Companion.fixedTrendFactorConfiguration
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import java.time.Duration
@@ -13,7 +12,7 @@ class TrendFactorSpec : FunSpec({
         val currentSalesRate = SalesRate.of(25, Duration.ofHours(1))
 
         // When
-        val trendFactor = TrendFactor.calculate(baseSalesRate, currentSalesRate, fixedTrendFactorConfiguration)
+        val trendFactor = TrendFactor.calculate(baseSalesRate, currentSalesRate,        TrendFactorStatusConfiguration.default())
 
         // Then
         trendFactor shouldBe TrendFactor.of(2.5, TrendFactorStatus.TRENDING)
@@ -25,7 +24,7 @@ class TrendFactorSpec : FunSpec({
         val currentSalesRate = SalesRate.of(8, Duration.ofHours(1))
 
         // When
-        val trendFactor = TrendFactor.calculate(baseSalesRate, currentSalesRate, fixedTrendFactorConfiguration)
+        val trendFactor = TrendFactor.calculate(baseSalesRate, currentSalesRate,        TrendFactorStatusConfiguration.default())
 
         // Then
         trendFactor shouldBe TrendFactor.of(0.4, TrendFactorStatus.UNDERPERFORMING)
@@ -37,7 +36,7 @@ class TrendFactorSpec : FunSpec({
         val currentSalesRate = SalesRate.of(0, Duration.ofHours(1))
 
         // When
-        val trendFactor = TrendFactor.calculate(baseSalesRate, currentSalesRate, fixedTrendFactorConfiguration)
+        val trendFactor = TrendFactor.calculate(baseSalesRate, currentSalesRate,        TrendFactorStatusConfiguration.default())
 
         // Then
         trendFactor shouldBe TrendFactor.of(0.0, TrendFactorStatus.UNDERPERFORMING)

@@ -1,5 +1,8 @@
 package com.macias34.ecommerce_kotlin_mongo.salesTrendAnalysis
 
+import org.springframework.stereotype.Service
+
+@Service
 class SalesTrendAnalysisService {
     fun detectSignificantSalesActivity(
         baseSalesRate: SalesRate, currentSalesRate: SalesRate,

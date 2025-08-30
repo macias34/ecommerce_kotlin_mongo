@@ -1,6 +1,5 @@
 package com.macias34.ecommerce_kotlin_mongo.salesTrendAnalysis
 
-import com.macias34.ecommerce_kotlin_mongo.salesTrendAnalysis.Fixtures.Companion.fixedTrendFactorConfiguration
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import java.time.Duration
@@ -15,7 +14,9 @@ class SalesTrendDetectionSpec: FunSpec({
 
         // When
         val significantSalesActivity =
-            salesTrendAnalysisService.detectSignificantSalesActivity(baseSalesRate, currentSalesRate, fixedTrendFactorConfiguration)
+            salesTrendAnalysisService.detectSignificantSalesActivity(baseSalesRate, currentSalesRate,
+                TrendFactorStatusConfiguration.default()
+            )
 
         // Then
         significantSalesActivity shouldBe SignificantSalesActivity.of(2.5, TrendFactorStatus.TRENDING)
@@ -29,7 +30,7 @@ class SalesTrendDetectionSpec: FunSpec({
         // When
         val significantSalesActivity =
             salesTrendAnalysisService.detectSignificantSalesActivity(baseSalesRate, currentSalesRate,
-                fixedTrendFactorConfiguration)
+                TrendFactorStatusConfiguration.default())
 
         // Then
         significantSalesActivity shouldBe SignificantSalesActivity.of(0.4, TrendFactorStatus.UNDERPERFORMING)
@@ -43,7 +44,7 @@ class SalesTrendDetectionSpec: FunSpec({
         // When
         val significantSalesActivity =
             salesTrendAnalysisService.detectSignificantSalesActivity(baseSalesRate, currentSalesRate,
-                fixedTrendFactorConfiguration)
+                TrendFactorStatusConfiguration.default())
 
         // Then
         significantSalesActivity shouldBe SignificantSalesActivity.of(1.1, TrendFactorStatus.STABLE)
