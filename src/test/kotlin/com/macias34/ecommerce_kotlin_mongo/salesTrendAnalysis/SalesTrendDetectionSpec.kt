@@ -35,18 +35,17 @@ class SalesTrendDetectionSpec: FunSpec({
         significantSalesActivity shouldBe SignificantSalesActivity.of(0.4, TrendFactorStatus.UNDERPERFORMING)
     }
 
-    test("Insignificant sales activity change is ignored") {
+    test("Insignificant sales activity change is not ignored") {
         // Given
-        val significantActivityThreshold = SignificantActivityThreshold(0.2)
         val baseSalesRate = SalesRate.of(10, Duration.ofHours(1))
         val currentSalesRate = SalesRate.of(11, Duration.ofHours(1))
 
         // When
         val significantSalesActivity =
             salesTrendAnalysisService.detectSignificantSalesActivity(baseSalesRate, currentSalesRate,
-                fixedTrendFactorConfiguration, significantActivityThreshold)
+                fixedTrendFactorConfiguration)
 
         // Then
-        significantSalesActivity shouldBe null
+        significantSalesActivity shouldBe SignificantSalesActivity.of(1.1, TrendFactorStatus.STABLE)
     }
 })
