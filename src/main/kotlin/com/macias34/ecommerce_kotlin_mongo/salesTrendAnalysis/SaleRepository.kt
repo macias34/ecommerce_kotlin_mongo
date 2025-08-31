@@ -5,12 +5,15 @@ import java.time.Instant
 import java.util.UUID
 
 interface SaleRepository : MongoRepository<Sale, UUID> {
-    fun countByProductIdAndCapturedAtBetween(
+    fun findByProductIdAndAnalyzedAtIsNull(
+        productId: UUID,
+    ): List<Sale>
+
+    fun findByProductIdAndCapturedAtBetween(
         productId: UUID,
         capturedAtAfter: Instant,
         capturedAtBefore: Instant
-    ): Long
-
+    ): List<Sale>
 
 
 }

@@ -6,11 +6,17 @@ import java.time.Instant
 import java.util.UUID
 
 @Document(collection = "sale")
-data class Sale private constructor(@Id val id: UUID, val productId: UUID, val quantity: Quantity, val capturedAt: Instant) {
+data class Sale private constructor(@Id val id: UUID, val productId: UUID, val quantity: Quantity, val capturedAt: Instant,
+    val analyzedAt: Instant? = null
+    ) {
     companion object {
         fun of(productId: UUID, quantity: Long, capturedAt: Instant): Sale {
             return Sale(UUID.randomUUID(), productId, Quantity(quantity), capturedAt)
         }
+    }
+
+    fun markAsAnalyzed(): Sale {
+        return this.copy(analyzedAt = Instant.now())
     }
 }
 
