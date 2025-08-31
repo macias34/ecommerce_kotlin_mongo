@@ -7,6 +7,7 @@ plugins {
 
 group = "com.macias34"
 version = "0.0.1-SNAPSHOT"
+val mongockVersion = "5.5.1"
 
 java {
 	toolchain {
@@ -24,7 +25,12 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("javax.money:money-api:1.1")
-	implementation("org.javamoney:moneta:1.4.2")
+	implementation("org.javamoney:moneta:1.4.2") {
+		exclude(group = "org.slf4j", module = "slf4j-api")
+	}
+	implementation(platform("io.mongock:mongock-bom:$mongockVersion"))
+	implementation("io.mongock:mongock-springboot-v3")
+	implementation("io.mongock:mongodb-springdata-v4-driver")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("io.kotest:kotest-runner-junit5:5.9.1")

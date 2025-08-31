@@ -1,7 +1,7 @@
 package com.macias34.ecommerce_kotlin_mongo.product
 
-import com.macias34.ecommerce_kotlin_mongo.MoneyData
-import com.macias34.ecommerce_kotlin_mongo.Vendor
+import com.macias34.ecommerce_kotlin_mongo.common.MoneyData
+import com.macias34.ecommerce_kotlin_mongo.common.Vendor
 import java.util.UUID
 
 data class ProductData(

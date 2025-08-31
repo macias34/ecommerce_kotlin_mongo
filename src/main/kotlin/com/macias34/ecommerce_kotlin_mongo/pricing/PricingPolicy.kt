@@ -1,7 +1,7 @@
 package com.macias34.ecommerce_kotlin_mongo.pricing
 
-import com.macias34.ecommerce_kotlin_mongo.DateRange
-import com.macias34.ecommerce_kotlin_mongo.Vendor
+import com.macias34.ecommerce_kotlin_mongo.common.DateRange
+import com.macias34.ecommerce_kotlin_mongo.common.Vendor
 import org.javamoney.moneta.Money
 import java.math.BigDecimal
 import java.math.RoundingMode

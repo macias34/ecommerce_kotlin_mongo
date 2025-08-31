@@ -11,4 +11,6 @@ interface SaleRepository : MongoRepository<Sale, UUID> {
         capturedAtBefore: Instant
     ): Long
 
+
+
 }

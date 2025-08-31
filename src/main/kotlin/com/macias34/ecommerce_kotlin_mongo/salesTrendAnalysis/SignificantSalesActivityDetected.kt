@@ -1,7 +1,7 @@
 package com.macias34.ecommerce_kotlin_mongo.salesTrendAnalysis
 
-import com.macias34.ecommerce_kotlin_mongo.DateRange
-import com.macias34.ecommerce_kotlin_mongo.Event
+import com.macias34.ecommerce_kotlin_mongo.common.DateRange
+import com.macias34.ecommerce_kotlin_mongo.common.Event
 import java.time.Instant
 import java.util.UUID
 

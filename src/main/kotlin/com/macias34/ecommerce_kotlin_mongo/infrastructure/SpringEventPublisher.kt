@@ -1,6 +1,8 @@
-package com.macias34.ecommerce_kotlin_mongo
-import org.springframework.context.ApplicationEventPublisher
+package com.macias34.ecommerce_kotlin_mongo.infrastructure
 
+import com.macias34.ecommerce_kotlin_mongo.common.Event
+import com.macias34.ecommerce_kotlin_mongo.common.EventPublisher
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 
 @Component

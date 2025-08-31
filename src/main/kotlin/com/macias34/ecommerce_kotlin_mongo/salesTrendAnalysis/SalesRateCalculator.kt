@@ -1,6 +1,6 @@
 package com.macias34.ecommerce_kotlin_mongo.salesTrendAnalysis
 
-import com.macias34.ecommerce_kotlin_mongo.DateRange
+import com.macias34.ecommerce_kotlin_mongo.common.DateRange
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant

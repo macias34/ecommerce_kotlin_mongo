@@ -1,15 +1,17 @@
 package com.macias34.ecommerce_kotlin_mongo.pricing
 
-import com.macias34.ecommerce_kotlin_mongo.DateRange
+import com.macias34.ecommerce_kotlin_mongo.common.DateRange
 import com.macias34.ecommerce_kotlin_mongo.TestFixtures.Companion.money
-import com.macias34.ecommerce_kotlin_mongo.Vendor
+import com.macias34.ecommerce_kotlin_mongo.common.Vendor
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import java.time.Duration
 import java.time.Instant
+import java.util.UUID
 
 class ProductPricingSpec : FunSpec({
 
+    val fixedProductId = UUID.randomUUID()
     val fixedDate = Instant.now()
     val fixedDateRange = DateRange(fixedDate, fixedDate.plus(Duration.ofDays(1)))
     val applicableContext = PricingContext(Vendor.ALLEGRO, fixedDate)
@@ -18,7 +20,7 @@ class ProductPricingSpec : FunSpec({
 
     test("Calculating the price with no active policies") {
         // Given
-        val pricing = ProductPricing.of(money(100))
+        val pricing = ProductPricing.of(fixedProductId,money(100))
 
         // Then
         pricing.priceFor(applicableContext) shouldBe money(100)
@@ -28,7 +30,7 @@ class ProductPricingSpec : FunSpec({
         // Given
         val cumulativePolicy =
             PricingPolicy.ofPercentage(15.0, fixedApplicability)
-        val pricing = ProductPricing.of(
+        val pricing = ProductPricing.of(fixedProductId,
             money(100), setOf(cumulativePolicy)
         )
 
@@ -40,7 +42,7 @@ class ProductPricingSpec : FunSpec({
         // Given
         val cumulativePolicy =
             PricingPolicy.ofPercentage(15.0, fixedApplicability)
-        val pricing = ProductPricing.of(
+        val pricing = ProductPricing.of(fixedProductId,
             money(100), setOf(cumulativePolicy)
         )
 
@@ -54,7 +56,7 @@ class ProductPricingSpec : FunSpec({
             PricingPolicy.ofPercentage(10.0, fixedApplicability)
         val valuePolicy =
             PricingPolicy.ofValue(20.0, fixedApplicability)
-        val pricing = ProductPricing.of(money(100),
+        val pricing = ProductPricing.of(fixedProductId, money(100),
             setOf(percentagePolicy, valuePolicy))
 
         // Then
@@ -64,7 +66,7 @@ class ProductPricingSpec : FunSpec({
     test("A single Exclusive Policy is applied") {
         // Given
         val exclusivePolicy = PricingPolicy.ofPercentage(-25.0, fixedApplicability)
-        val pricing = ProductPricing.of(money(200),
+        val pricing = ProductPricing.of(fixedProductId, money(200),
             exclusivePolicies = setOf(exclusivePolicy))
 
         // Then
@@ -74,7 +76,7 @@ class ProductPricingSpec : FunSpec({
     test("An Exclusive Policy is not applied for not applicable context") {
         // Given
         val exclusivePolicy = PricingPolicy.ofPercentage(-25.0, fixedApplicability)
-        val pricing = ProductPricing.of(money(200),
+        val pricing = ProductPricing.of(fixedProductId, money(200),
             exclusivePolicies = setOf(exclusivePolicy))
 
         // Then
@@ -85,7 +87,7 @@ class ProductPricingSpec : FunSpec({
         // Given
         val higherFinalPricePolicy = PricingPolicy.ofPercentage(-20.0, fixedApplicability)
         val lowerFinalPricePolicy = PricingPolicy.ofValue(-25.0, fixedApplicability)
-        val pricing = ProductPricing.of(money(100),
+        val pricing = ProductPricing.of(fixedProductId, money(100),
             exclusivePolicies = setOf(higherFinalPricePolicy, lowerFinalPricePolicy))
 
         // Then
@@ -97,7 +99,7 @@ class ProductPricingSpec : FunSpec({
         val cumulativePolicy = PricingPolicy.ofPercentage(10.0, fixedApplicability)
         val percentageExclusivePolicy = PricingPolicy.ofPercentage(-20.0, fixedApplicability)
         val valueExclusivePolicy = PricingPolicy.ofValue(-25.0, fixedApplicability)
-        val pricing = ProductPricing.of(money(100),
+        val pricing = ProductPricing.of(fixedProductId, money(100),
             setOf(cumulativePolicy), setOf(percentageExclusivePolicy, valueExclusivePolicy))
 
         // Then
@@ -107,7 +109,7 @@ class ProductPricingSpec : FunSpec({
     test("The final price cannot be negative") {
         // Given
         val exclusivePolicy =  PricingPolicy.ofValue(-15.0, fixedApplicability)
-        val pricing = ProductPricing.of(money(10),
+        val pricing = ProductPricing.of(fixedProductId, money(10),
             exclusivePolicies = setOf(exclusivePolicy))
 
         // Then

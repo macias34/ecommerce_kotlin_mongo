@@ -7,7 +7,7 @@ import java.util.UUID
 
 @Document(collection = "product_pricing")
 class ProductPricing private constructor(
-    @Id val id: UUID, private val basePrice: Money, private val cumulativePolicies: CumulativePolicies,
+    @Id val id: UUID, val productId: UUID, private val basePrice: Money, private val cumulativePolicies: CumulativePolicies,
     private val exclusivePolicies: ExclusivePolicies
 ) {
     fun priceFor(pricingContext: PricingContext): Money {
@@ -22,12 +22,14 @@ class ProductPricing private constructor(
 
     companion object {
         fun of(
+            productId: UUID,
             basePrice: Money, priceAdjustments: Set<PricingPolicy> = setOf(),
             exclusivePolicies: Set<PricingPolicy> = setOf()
         ): ProductPricing {
 
             return ProductPricing(
                 UUID.randomUUID(),
+                productId,
                 basePrice,
                 CumulativePolicies(priceAdjustments),
                 ExclusivePolicies(exclusivePolicies)

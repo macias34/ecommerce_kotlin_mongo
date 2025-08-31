@@ -1,4 +1,4 @@
-package com.macias34.ecommerce_kotlin_mongo
+package com.macias34.ecommerce_kotlin_mongo.common
 
 import org.javamoney.moneta.Money
 import java.math.BigDecimal

@@ -1,7 +1,8 @@
 package com.macias34.ecommerce_kotlin_mongo.salesTrendAnalysis
 
-import com.macias34.ecommerce_kotlin_mongo.DateRange
-import com.macias34.ecommerce_kotlin_mongo.EventPublisher
+import com.macias34.ecommerce_kotlin_mongo.common.DateRange
+import com.macias34.ecommerce_kotlin_mongo.common.EventPublisher
+import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.Duration
@@ -15,6 +16,10 @@ class SignificantSaleDetectionCron(
     private val saleRepository: SaleRepository,
     private val eventPublisher: EventPublisher
 ) {
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(SignificantSaleDetectionCron::class.java)
+    }
 
     @Scheduled(cron = "*/10 * * * * *")
     fun detectSignificantTrend() {
@@ -30,10 +35,17 @@ class SignificantSaleDetectionCron(
                     dayStart.minus(1, ChronoUnit.DAYS),
                     dayStart
                 )
-            val baseSalesRate = SalesRate.of(baseSales, Duration.ofSeconds(10))
 
             val currentSales = saleRepository
                 .countByProductIdAndCapturedAtBetween(productId, now, now.plusSeconds(10L))
+
+            logger.info("baseSales: $baseSales, currentSales: $currentSales")
+
+            if (baseSales == 0L || currentSales == 0L) {
+                return
+            }
+
+            val baseSalesRate = SalesRate.of(baseSales, Duration.ofSeconds(10))
             val currentSalesRate = SalesRate.of(currentSales, Duration.ofSeconds(10))
 
             val significantSalesActivity =
